@@ -2,7 +2,7 @@
 
 > Interactive pixel displacement canvas effect for WordPress — move your cursor and watch the background come alive.
 
-![Version](https://img.shields.io/badge/version-1.2.1-black?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.3.0-black?style=flat-square)
 ![WordPress](https://img.shields.io/badge/WordPress-5.8%2B-3858e9?style=flat-square&logo=wordpress&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777bb4?style=flat-square&logo=php&logoColor=white)
 ![License](https://img.shields.io/badge/license-GPL--2.0-green?style=flat-square)
@@ -31,9 +31,11 @@ Every aspect of the effect — grid density, displacement physics, color, opacit
 ## Features
 
 - **Zero dependencies** — pure vanilla JS, no jQuery or external libraries
-- **Full settings panel** — accessible from the WordPress root sidebar menu
-- **Live color preview** — see your color changes before saving
-- **Page targeting** — apply to all pages, front page only, or a custom selection
+- **Full settings panel** — two-column layout with live preview canvas on the right
+- **Live preview** — real-time canvas inside the admin panel, updates as you move sliders
+- **Smart activation** — plugin activates automatically based on Page Targeting selection, no manual on/off toggle needed
+- **Page targeting** — All Pages tab or Specific Pages tab with a full checkbox list
+- **Slider + number input** — every range control has a typed number input and ▲▼ spin buttons with validation
 - **Physics controls** — cell size, influence radius, displacement strength, return speed
 - **Performance-aware** — pauses on hidden tabs via Page Visibility API, debounces on resize
 - **Accessible** — canvas is `aria-hidden` and `pointer-events: none`, never interferes with content
@@ -44,7 +46,7 @@ Every aspect of the effect — grid density, displacement physics, color, opacit
 
 ### From ZIP (manual)
 
-1. Download `background-motion.zip` from the [Releases](../../releases) page
+1. Download `background-motion-v1.3.0.zip` from the [Releases](../../releases) page
 2. Go to **WordPress Admin → Plugins → Add New → Upload Plugin**
 3. Select the ZIP file and click **Install Now**
 4. Click **Activate Plugin**
@@ -64,23 +66,20 @@ Then activate from **Plugins → Installed Plugins**.
 
 After activation, find **Background Motion** in the WordPress sidebar menu (below Settings).
 
-### General
-
-| Setting | Default | Description |
-|---|---|---|
-| Effect | Enabled | Master on/off switch |
-| Z-index | `-1` | Stack position of the canvas. `-1` places it behind all content |
-| Canvas opacity | `1.0` | Overall transparency of the canvas layer |
-| Cursor dot | On | Shows a small white dot at the exact cursor position |
-| Influence ring | On | Shows a subtle circle marking the displacement radius |
+The settings panel uses a **two-column layout**: all controls on the left, a live preview canvas on the right that responds to your mouse and updates instantly as you change any setting.
 
 ### Page Targeting
 
-| Option | Description |
+This section controls both **where** the effect appears and **whether it is active at all**.
+
+| Tab | Behavior |
 |---|---|
-| All pages | Effect runs on every page of the site |
-| Front page only | Effect runs only on `is_front_page()` |
-| Specific pages | Pick pages from a checkbox list or enter IDs manually |
+| All Pages | Effect runs on every page. Plugin is always active. |
+| Specific Pages | A checkbox list of all published pages appears. Plugin is active only when at least one page is checked. |
+
+> **Note:** There is no separate Enable/Disable toggle. The plugin is considered active when targeting is set to "All Pages", or when at least one specific page is selected.
+
+The admin header shows a live **Active / Inactive** badge reflecting the current state, and a warning notice appears if the plugin is inactive.
 
 ### Grid & Physics
 
@@ -114,6 +113,29 @@ After activation, find **Background Motion** in the WordPress sidebar menu (belo
 | Deep green | 16 | 0.3 | 1.0 | 0.5 |
 | Magenta | 20 | 1.0 | 0.3 | 0.9 |
 
+### General
+
+| Setting | Default | Description |
+|---|---|---|
+| Canvas opacity | `1.0` | Overall transparency of the canvas layer |
+| Z-index | `-1` | Stack position of the canvas. `-1` places it behind all content |
+| Cursor dot | On | Shows a small white dot at the exact cursor position |
+| Influence ring | On | Shows a subtle circle marking the displacement radius |
+
+### Slider Controls
+
+Every numeric setting uses a combined control:
+
+```
+[────────────────] [▲]  [  22  ]
+      range         [▼]  number
+```
+
+- Drag the **slider** to adjust visually
+- Click **▲ / ▼** to increment or decrement by one step
+- Type directly into the **number input** for precise values
+- Invalid values (out of range, non-numeric) are highlighted in red and clamped on blur
+
 ---
 
 ## File Structure
@@ -121,6 +143,7 @@ After activation, find **Background Motion** in the WordPress sidebar menu (belo
 ```
 background-motion/
 ├── background-motion.php       # Main plugin file — registration, admin UI, settings
+├── README.md
 └── assets/
     └── background-motion.js    # Frontend canvas effect (vanilla JS, no dependencies)
 ```
@@ -178,6 +201,18 @@ var b = Math.min(255, Math.round(bright * B_MULT));
 ctx.fillStyle = `rgba(${r},${g},${b},${cell.alpha})`;
 ```
 
+### Activation logic
+
+```php
+function bgm_is_active() {
+    $opts = bgm_get();
+    if ( $opts['apply_to'] === 'all' ) return true;
+    return ! empty( $opts['specific_pages'] );
+}
+```
+
+The frontend script is only enqueued when `bgm_is_active()` returns `true` and the current page matches the targeting rules.
+
 ### Config injection
 
 Settings are passed from PHP to JS via `wp_localize_script`:
@@ -213,10 +248,21 @@ wp_localize_script( 'bgm-main', 'BGM_CONFIG', [
 
 ## Changelog
 
+### 1.3.0
+- **Page Targeting redesign** — replaced dropdown with two tabs: All Pages / Specific Pages
+- **Specific Pages** now shows a full checkbox list of all published pages with names and IDs
+- **Smart activation** — removed the Enable/Disable toggle; plugin activates based on targeting selection
+- **Active/Inactive badge** added to admin header with a warning notice when inactive
+- **Slider controls** — every range input now paired with a typed number field and ▲▼ spin buttons
+- **Input validation** — out-of-range values highlighted in red, clamped on blur
+- **Admin panel redesign** — two-column layout: settings on the left, live preview canvas on the right
+- **Live preview** — interactive canvas inside the admin panel, updates in real time as settings change
+- Removed "Front page only" option (simplified to All / Specific)
+
 ### 1.2.1
 - Initial public release
 - Full settings panel with live color preview swatches
-- Page targeting with checkbox picker
+- Page targeting with checkbox picker and manual ID input
 - Root sidebar menu entry with custom SVG icon
 - Page Visibility API pause/resume
 - Debounced resize handler
