@@ -116,14 +116,33 @@ function bgm_enqueue() {
 ───────────────────────────────────────── */
 add_action( 'admin_menu', 'bgm_admin_menu' );
 function bgm_admin_menu() {
-    add_menu_page( 'Background Motion', 'Background Motion', 'manage_options',
-        'background-motion', 'bgm_settings_page', bgm_menu_icon(), 81 );
+    // add_menu_page( 'Background Motion', 'Background Motion', 'manage_options',
+    //     'background-motion', 'bgm_settings_page', bgm_menu_icon(), 81 );
+
+
+    if ( ! isset( $GLOBALS['mpro_menu_registered'] ) ) {
+    add_menu_page(
+        'MPRO Suite', 'MPRO', 'manage_options',
+        'mpro-dashboard', 'mpro_bm_dashboard_fallback',
+        'dashicons-superhero', 4
+    );
+    $GLOBALS['mpro_menu_registered'] = true;
+    }
+    add_submenu_page(
+        'mpro-dashboard',
+        'Background Motion Settings',
+        'Background Motion',
+        'manage_options',
+        'mpro-background-motion',
+        'your_existing_settings_function'
+    );
 }
 
 add_action( 'admin_init', 'bgm_register_settings' );
 function bgm_register_settings() {
     register_setting( 'bgm_group', BGM_OPTION, 'bgm_sanitize' );
 }
+
 
 /* ─────────────────────────────────────────
    Sanitize
