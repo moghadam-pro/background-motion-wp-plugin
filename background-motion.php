@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Background Motion
- * Plugin URI:  https://moghadam.pro
+ * Plugin URI:  https://moghadam.pro/mpro-plugins
  * Description: Interactive pixel displacement canvas effect for your site background with full settings control.
  * Version:     1.3.1
  * Author:      Moghadam.pro
- * Author URI:  https://moghadam.pro
+ * Author URI:  https://moghadam.pro/mpro-plugins
  * License:     GPL-2.0+
  * Text Domain: background-motion
  */
@@ -114,28 +114,37 @@ function bgm_enqueue() {
 /* ─────────────────────────────────────────
    Admin menu
 ───────────────────────────────────────── */
-add_action( 'admin_menu', 'bgm_admin_menu' );
+add_action( 'admin_menu', 'bgm_admin_menu', 20 );
 function bgm_admin_menu() {
-    // add_menu_page( 'Background Motion', 'Background Motion', 'manage_options',
-    //     'background-motion', 'bgm_settings_page', bgm_menu_icon(), 81 );
 
-
+    // Register MPRO top-level menu only once (shared across all MPRO plugins)
     if ( ! isset( $GLOBALS['mpro_menu_registered'] ) ) {
-    add_menu_page(
-        'MPRO Suite', 'MPRO', 'manage_options',
-        'mpro-dashboard', 'mpro_bm_dashboard_fallback',
-        'dashicons-superhero', 4
-    );
-    $GLOBALS['mpro_menu_registered'] = true;
+        add_menu_page(
+            'MPRO Suite',
+            'MPRO',
+            'manage_options',
+            'mpro-dashboard',
+            'bgm_mpro_dashboard_page',
+            'dashicons-superhero',
+            4
+        );
+        $GLOBALS['mpro_menu_registered'] = true;
     }
+
+    // Background Motion as a submenu item under MPRO
     add_submenu_page(
         'mpro-dashboard',
         'Background Motion Settings',
         'Background Motion',
         'manage_options',
-        'mpro-background-motion',
-        'your_existing_settings_function'
+        'background-motion',
+        'bgm_settings_page'
     );
+}
+
+// Fallback dashboard page (shown only when Background Motion registers the parent)
+function bgm_mpro_dashboard_page() {
+    echo '<div class="wrap"><h1>🦸 MPRO Suite</h1><p>Welcome to the MPRO plugin suite. Select a plugin from the submenu to configure it.</p></div>';
 }
 
 add_action( 'admin_init', 'bgm_register_settings' );
