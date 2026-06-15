@@ -224,7 +224,7 @@ function bgm_settings_page() {
         </div>
         <div>
             <h1>Background Motion</h1>
-            <p>v1.3.1 &nbsp;·&nbsp; <a href="https://moghadam.pro" target="_blank">moghadam.pro</a>
+            <p>v1.3.1 &nbsp;·&nbsp; <a href="https://moghadam.pro/mpro-plugins" target="_blank">moghadam.pro</a>
                &nbsp;·&nbsp;
                <span class="bgm-pill <?= $active ? 'bgm-pill-on' : 'bgm-pill-off' ?>">
                    <?= $active ? '● Active' : '○ Inactive' ?>

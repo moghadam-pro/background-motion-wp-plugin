@@ -72,9 +72,9 @@ The settings panel uses a **two-column layout**: all controls on the left, a liv
 
 This section controls both **where** the effect appears and **whether it is active at all**.
 
-| Tab | Behavior |
-|---|---|
-| All Pages | Effect runs on every page. Plugin is always active. |
+| Tab            | Behavior                                                                                                 |
+| -------------- | -------------------------------------------------------------------------------------------------------- |
+| All Pages      | Effect runs on every page. Plugin is always active.                                                      |
 | Specific Pages | A checkbox list of all published pages appears. Plugin is active only when at least one page is checked. |
 
 > **Note:** There is no separate Enable/Disable toggle. The plugin is considered active when targeting is set to "All Pages", or when at least one specific page is selected.
@@ -83,44 +83,44 @@ The admin header shows a live **Active / Inactive** badge reflecting the current
 
 ### Grid & Physics
 
-| Setting | Range | Default | Description |
-|---|---|---|---|
-| Cell size | 4 – 80 px | `22` | Size of each pixel block. Smaller = denser grid, higher CPU cost |
-| Influence radius | 20 – 400 px | `110` | How far from the cursor cells are affected |
-| Displacement strength | 0 – 300 | `55` | How far cells are pushed from their origin |
-| Return speed (lerp) | 0.01 – 1.0 | `0.09` | Interpolation factor. Lower = slower, stretchier return |
+| Setting               | Range       | Default | Description                                                      |
+| --------------------- | ----------- | ------- | ---------------------------------------------------------------- |
+| Cell size             | 4 – 80 px   | `22`    | Size of each pixel block. Smaller = denser grid, higher CPU cost |
+| Influence radius      | 20 – 400 px | `110`   | How far from the cursor cells are affected                       |
+| Displacement strength | 0 – 300     | `55`    | How far cells are pushed from their origin                       |
+| Return speed (lerp)   | 0.01 – 1.0  | `0.09`  | Interpolation factor. Lower = slower, stretchier return          |
 
 ### Color
 
-| Setting | Range | Default | Description |
-|---|---|---|---|
-| Base brightness | 0 – 200 | `18` | Luminance of cells at rest |
-| Red multiplier | 0 – 2 | `0.72` | Scales the red channel of each cell's color |
-| Green multiplier | 0 – 2 | `0.78` | Scales the green channel |
-| Blue multiplier | 0 – 2 | `1.0` | Scales the blue channel |
-| Alpha min | 0 – 1 | `0.55` | Minimum per-cell transparency (randomized per cell) |
-| Alpha max | 0 – 1 | `0.90` | Maximum per-cell transparency |
+| Setting          | Range   | Default | Description                                         |
+| ---------------- | ------- | ------- | --------------------------------------------------- |
+| Base brightness  | 0 – 200 | `18`    | Luminance of cells at rest                          |
+| Red multiplier   | 0 – 2   | `0.72`  | Scales the red channel of each cell's color         |
+| Green multiplier | 0 – 2   | `0.78`  | Scales the green channel                            |
+| Blue multiplier  | 0 – 2   | `1.0`   | Scales the blue channel                             |
+| Alpha min        | 0 – 1   | `0.55`  | Minimum per-cell transparency (randomized per cell) |
+| Alpha max        | 0 – 1   | `0.90`  | Maximum per-cell transparency                       |
 
 > **Color formula:** `R = clamp(brightness × rMult, 0, 255)` — same for G and B. Cells near the cursor receive a `+60` brightness boost.
 
 #### Preset examples
 
-| Look | Brightness | R | G | B |
-|---|---|---|---|---|
-| Cool blue (default) | 18 | 0.72 | 0.78 | 1.0 |
-| Warm amber | 22 | 1.0 | 0.75 | 0.3 |
-| Monochrome grey | 20 | 0.9 | 0.9 | 0.9 |
-| Deep green | 16 | 0.3 | 1.0 | 0.5 |
-| Magenta | 20 | 1.0 | 0.3 | 0.9 |
+| Look                | Brightness | R    | G    | B   |
+| ------------------- | ---------- | ---- | ---- | --- |
+| Cool blue (default) | 18         | 0.72 | 0.78 | 1.0 |
+| Warm amber          | 22         | 1.0  | 0.75 | 0.3 |
+| Monochrome grey     | 20         | 0.9  | 0.9  | 0.9 |
+| Deep green          | 16         | 0.3  | 1.0  | 0.5 |
+| Magenta             | 20         | 1.0  | 0.3  | 0.9 |
 
 ### General
 
-| Setting | Default | Description |
-|---|---|---|
-| Canvas opacity | `1.0` | Overall transparency of the canvas layer |
-| Z-index | `-1` | Stack position of the canvas. `-1` places it behind all content |
-| Cursor dot | On | Shows a small white dot at the exact cursor position |
-| Influence ring | On | Shows a subtle circle marking the displacement radius |
+| Setting        | Default | Description                                                     |
+| -------------- | ------- | --------------------------------------------------------------- |
+| Canvas opacity | `1.0`   | Overall transparency of the canvas layer                        |
+| Z-index        | `-1`    | Stack position of the canvas. `-1` places it behind all content |
+| Cursor dot     | On      | Shows a small white dot at the exact cursor position            |
+| Influence ring | On      | Shows a subtle circle marking the displacement radius           |
 
 ### Slider Controls
 
@@ -158,8 +158,10 @@ On page load, the script appends a `<canvas>` element to `<body>` with:
 
 ```css
 position: fixed;
-top: 0; left: 0;
-width: 100vw; height: 100vh;
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
 pointer-events: none;
 z-index: -1;
 aria-hidden: true;
@@ -185,16 +187,16 @@ Each frame:
 
 ```js
 var force = 1 - dist / RADIUS;
-var push  = force * force * STRENGTH;
-cell.tx   = cell.ox + (dx / dist) * push;
+var push = force * force * STRENGTH;
+cell.tx = cell.ox + (dx / dist) * push;
 
-cell.x   += (cell.tx - cell.x) * LERP;
+cell.x += (cell.tx - cell.x) * LERP;
 ```
 
 ### Color
 
 ```js
-var bright = cell.brightness + (nearCursor ? (1 - dist/RADIUS) * 60 : 0);
+var bright = cell.brightness + (nearCursor ? (1 - dist / RADIUS) * 60 : 0);
 var r = Math.min(255, Math.round(bright * R_MULT));
 var g = Math.min(255, Math.round(bright * G_MULT));
 var b = Math.min(255, Math.round(bright * B_MULT));
@@ -238,17 +240,18 @@ wp_localize_script( 'bgm-main', 'BGM_CONFIG', [
 
 ## Requirements
 
-| | Minimum |
-|---|---|
-| WordPress | 5.8 |
-| PHP | 7.4 |
-| Browser | Any modern browser with Canvas 2D and `requestAnimationFrame` support |
+|           | Minimum                                                               |
+| --------- | --------------------------------------------------------------------- |
+| WordPress | 5.8                                                                   |
+| PHP       | 7.4                                                                   |
+| Browser   | Any modern browser with Canvas 2D and `requestAnimationFrame` support |
 
 ---
 
 ## Changelog
 
 ### 1.3.0
+
 - **Page Targeting redesign** — replaced dropdown with two tabs: All Pages / Specific Pages
 - **Specific Pages** now shows a full checkbox list of all published pages with names and IDs
 - **Smart activation** — removed the Enable/Disable toggle; plugin activates based on targeting selection
@@ -260,6 +263,7 @@ wp_localize_script( 'bgm-main', 'BGM_CONFIG', [
 - Removed "Front page only" option (simplified to All / Specific)
 
 ### 1.2.1
+
 - Initial public release
 - Full settings panel with live color preview swatches
 - Page targeting with checkbox picker and manual ID input
@@ -271,7 +275,7 @@ wp_localize_script( 'bgm-main', 'BGM_CONFIG', [
 
 ## Author
 
-**Moghadam.pro** — [moghadam.pro](https://moghadam.pro)
+**Moghadam.pro** — [moghadam.pro](https://moghadam.pro/mpro-plugins)
 
 ---
 
